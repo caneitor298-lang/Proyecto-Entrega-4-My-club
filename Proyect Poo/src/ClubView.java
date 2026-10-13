@@ -4,7 +4,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class ClubView extends JPanel {
-    public ClubView(Usuario usuario, Club club, ClubController controlador, Runnable volver, Runnable refrescar) {
+    public ClubView(Usuario usuario, Club club, ClubController controlador, Runnable volver, Runnable refrescar,
+                    Runnable editarAnuncios, Runnable editarInformacion) {
         setLayout(new BorderLayout(12, 12));
         setBorder(BorderFactory.createEmptyBorder(20, 24, 24, 24));
         JPanel cabecera = new JPanel(new BorderLayout());
@@ -55,16 +56,24 @@ public class ClubView extends JPanel {
             horario.addActionListener(e -> cambiarHorario(usuario, club, controlador, refrescar));
             acciones.add(horario);
             JButton miembros = new JButton("Ver miembros");
-            miembros.addActionListener(e -> mostrarMiembros(club, controlador));
+            miembros.addActionListener(e -> mostrarMiembros(usuario, club, controlador));
             acciones.add(miembros);
+            JButton anuncios = new JButton("Editar anuncios");
+            anuncios.addActionListener(e -> editarAnuncios.run());
+            acciones.add(anuncios);
+            JButton informacionClub = new JButton("Editar información");
+            informacionClub.addActionListener(e -> editarInformacion.run());
+            acciones.add(informacionClub);
+            // Dos filas para que todos los botones quepan al reducir la ventana.
+            acciones.setLayout(new GridLayout(0, 3, 8, 8));
         } else acciones.add(new JLabel("Solo el líder de este club puede administrarlo."));
         add(acciones, BorderLayout.SOUTH);
     }
 
-    private void mostrarMiembros(Club club, ClubController controlador) {
+    private void mostrarMiembros(Usuario usuario, Club club, ClubController controlador) {
         ArrayList<Estudiante> lista;
         try {
-            lista = controlador.obtenerMiembros(club);
+            lista = controlador.obtenerMiembros(usuario, club);
         } catch (Exception ex) {
             VentanaPrincipal.mostrarError(this, ex);
             return;

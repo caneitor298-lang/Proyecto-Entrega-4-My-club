@@ -12,7 +12,14 @@ public class Main {
             ventana.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    datos.guardar();
+                    try {
+                        datos.guardar();
+                    } catch (RuntimeException ex) {
+                        VentanaPrincipal.mostrarError(ventana, ex);
+                        ventana.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                        return;
+                    }
+                    ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 }
             });
             ventana.setVisible(true);

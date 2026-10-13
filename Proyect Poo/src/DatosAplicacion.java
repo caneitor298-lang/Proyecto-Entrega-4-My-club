@@ -15,7 +15,8 @@ public class DatosAplicacion implements Serializable {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ARCHIVO))) {
             out.writeObject(this);
         } catch (IOException e) {
-            System.err.println("No se pudo guardar la persistencia: " + e.getMessage());
+            throw new IllegalStateException("Los cambios están en memoria, pero no se pudieron guardar. "
+                    + "Revisa los permisos de la carpeta e intenta de nuevo.", e);
         }
     }
 
@@ -49,13 +50,13 @@ public class DatosAplicacion implements Serializable {
                 "Académicos", "Biblioteca", "Lunes, 13:00 a 14:00"));
         datos.clubes.add(new Club("Programación", "Proyectos de software en equipo.",
                 "Tecnología", "Laboratorio 3", "Sábado, 09:00 a 11:00"));
-        datos.usuarios.add(new Estudiante("Emilio Cano", "emilio.cano@universidad.edu",
+        datos.usuarios.add(new Estudiante("Emilio Cano", "emilio.cano@uvg.edu.gt",
                 "Ciencias de la Computación", "Estudiante123"));
-        datos.usuarios.add(new Estudiante("Estudiante de prueba", "estudiante@universidad.edu",
+        datos.usuarios.add(new Estudiante("Estudiante de prueba", "estudiante@uvg.edu.gt",
                 "Ingeniería", "Estudiante123"));
-        datos.usuarios.add(new Lider("Líder de Videojuegos", "lider.videojuegos@universidad.edu",
+        datos.usuarios.add(new Lider("Líder de Videojuegos", "lider.videojuegos@uvg.edu.gt",
                 "Lider1234", datos.clubes.get(0)));
-        datos.usuarios.add(new Lider("Líder de Robótica", "lider.robotica@universidad.edu",
+        datos.usuarios.add(new Lider("Líder de Robótica", "lider.robotica@uvg.edu.gt",
                 "Lider1234", datos.clubes.get(1)));
         return datos;
     }

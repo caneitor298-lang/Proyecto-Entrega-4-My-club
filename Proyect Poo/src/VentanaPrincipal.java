@@ -1,6 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
- 
+
 /** Una sola ventana; CardLayout cambia el contenido sin abrir ventanas nuevas. */
 public class VentanaPrincipal extends JFrame {
     private final UsuarioController usuarios;
@@ -13,7 +13,8 @@ public class VentanaPrincipal extends JFrame {
     private InicioView inicio;
     private JPanel detalle;
     private JPanel misClubes;
- 
+    private JPanel edicion;
+
     public VentanaPrincipal(UsuarioController usuarios, ClubController clubes, DatosAplicacion datos) {
         this.usuarios = usuarios;
         this.clubes = clubes;
@@ -32,6 +33,7 @@ public class VentanaPrincipal extends JFrame {
         inicio = null;
         detalle = null;
         misClubes = null;
+        edicion = null;
         menu.removeAll();
         menu.setVisible(false);
         contenido.removeAll();
@@ -59,7 +61,7 @@ public class VentanaPrincipal extends JFrame {
         JButton explorar = new JButton("Explorar clubes");
         explorar.addActionListener(e -> mostrarInicio());
         navegacion.add(explorar);
-        
+
         if (usuario instanceof Estudiante) {
             JButton mis = new JButton("Mis clubes");
             mis.addActionListener(e -> mostrarMisClubes());
@@ -98,7 +100,8 @@ public class VentanaPrincipal extends JFrame {
     }
     public void mostrarClub(Club club, Runnable volver) {
         if (detalle != null) contenido.remove(detalle);
-        detalle = new ClubView(usuario, club, clubes, volver, () -> mostrarClub(club, volver));
+        detalle = new ClubView(usuario, club, clubes, volver, () -> mostrarClub(club, volver),
+                () -> mostrarEdicionAnuncios(club, volver), () -> mostrarEdicionClub(club, volver));
         contenido.add(detalle, "detalle");
         tarjetas.show(contenido, "detalle");
         contenido.revalidate();
@@ -109,7 +112,32 @@ public class VentanaPrincipal extends JFrame {
         JOptionPane.showMessageDialog(padre, mensaje, "Revisa la operación", JOptionPane.ERROR_MESSAGE);
     }
 
-    
+    private boolean puedeAdministrar(Club club) {
+        return usuario instanceof Lider && ((Lider) usuario).getClubAdministrado() == club;
+    }
+
+    private void mostrarEdicionAnuncios(Club club, Runnable volver) {
+        if (!puedeAdministrar(club)) return;
+        mostrarEdicion(new EditarAnunciosView((Lider) usuario, datos,
+                () -> mostrarClub(club, volver)));
+    }
+
+    private void mostrarEdicionClub(Club club, Runnable volver) {
+        if (!puedeAdministrar(club)) return;
+        mostrarEdicion(new InformacionClubView(usuario, club, clubes,
+                () -> mostrarClub(club, volver)));
+    }
+
+    private void mostrarEdicion(JPanel panel) {
+        if (edicion != null) contenido.remove(edicion);
+        edicion = panel;
+        contenido.add(edicion, "edicion");
+        tarjetas.show(contenido, "edicion");
+        contenido.revalidate();
+        contenido.repaint();
+    }
+
+
     public void mostrarPerfil() {
         if (!(usuario instanceof Estudiante)) return;
 
@@ -126,4 +154,4 @@ public class VentanaPrincipal extends JFrame {
         contenido.repaint();
     }
 }
- 
+

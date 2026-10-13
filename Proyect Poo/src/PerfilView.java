@@ -57,15 +57,13 @@ public class PerfilView extends JPanel {
                     new String(confirmar.getPassword())
                 );
 
-                datos.guardar();
-
                 JOptionPane.showMessageDialog(
                     this, "Perfil actualizado correctamente."
                 );
 
                 volver.run();
 
-            } catch (IllegalArgumentException ex) {
+            } catch (RuntimeException ex) {
                 JOptionPane.showMessageDialog(
                     this, ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE

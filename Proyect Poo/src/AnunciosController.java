@@ -21,16 +21,21 @@ public class AnunciosController {
         }
         anuncio.setTitulo(titulo.trim());
         anuncio.setMensaje(mensaje.trim());
+        datos.guardar();
     }
 
     public void eliminarAnuncio(Lider lider, Anuncio anuncio) {
         validar(lider, anuncio);
         lider.getClubAdministrado().getAnuncios().remove(anuncio);
+        datos.guardar();
     }
 
     private void validar(Lider lider, Anuncio anuncio) {
         if (lider == null || !datos.getUsuarios().contains(lider)) {
             throw new IllegalArgumentException("Usuario no registrado.");
+        }
+        if (!datos.getClubes().contains(lider.getClubAdministrado())) {
+            throw new IllegalArgumentException("Club no registrado.");
         }
         if (anuncio == null || !lider.getClubAdministrado().getAnuncios().contains(anuncio)) {
             throw new IllegalArgumentException("Selecciona un anuncio de tu club.");

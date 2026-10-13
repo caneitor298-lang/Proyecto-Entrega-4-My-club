@@ -28,11 +28,13 @@ public class ClubController {
     public boolean unirEstudianteAClub(Estudiante estudiante, Club club) {
         validarUsuarioYClub(estudiante, club);
         if (!estudiante.unirseClub(club)) return false;
+        datos.guardar();
         return true;
     }
     public boolean eliminarEstudianteDeClub(Estudiante estudiante, Club club) {
         validarUsuarioYClub(estudiante, club);
         if (!estudiante.salirClub(club)) return false;
+        datos.guardar();
         return true;
     }
     public void publicarAnuncio(Usuario usuario, Club club, String titulo, String mensaje) {
@@ -41,17 +43,27 @@ public class ClubController {
         validarTexto(mensaje, "El mensaje", 2000);
         Anuncio anuncio = new Anuncio(titulo.trim(), mensaje.trim(), LocalDate.now().toString());
         ((Lider) usuario).agregarAnuncio(anuncio);
+        datos.guardar();
     }
     public void cambiarHorarioClub(Usuario usuario, Club club, String horario) {
         validarLider(usuario, club);
         validarTexto(horario, "El horario", 150);
         ((Lider) usuario).cambiarhorario(horario.trim());
+        datos.guardar();
+    }
+
+    public void actualizarInformacionClub(Usuario usuario, Club club, String descripcion, String ubicacion) {
+        validarLider(usuario, club);
+        validarTexto(descripcion, "La descripción", 2000);
+        validarTexto(ubicacion, "La ubicación", 150);
+        club.setDescripcion(descripcion.trim());
+        club.setUbicacion(ubicacion.trim());
+        datos.guardar();
     }
 
     /** Devuelve los estudiantes inscritos en el club (membresía se guarda en cada Estudiante). */
-    public ArrayList<Estudiante> obtenerMiembros(Club club) {
-        if (club == null || !datos.getClubes().contains(club))
-            throw new IllegalArgumentException("Club no registrado.");
+    public ArrayList<Estudiante> obtenerMiembros(Usuario usuarioLider, Club club) {
+        validarLider(usuarioLider, club);
         ArrayList<Estudiante> miembros = new ArrayList<>();
         for (Usuario usuario : datos.getUsuarios()) {
             if (usuario instanceof Estudiante) {

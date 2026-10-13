@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -15,7 +14,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-public class EditarAnunciosView extends JFrame {
+public class EditarAnunciosView extends JPanel {
     private Lider lider;
     private Club club;
     private DatosAplicacion datos;
@@ -25,18 +24,22 @@ public class EditarAnunciosView extends JFrame {
     private JTextField campoTitulo = new JTextField();
     private JTextArea campoMensaje = new JTextArea(8, 30);
 
-    public EditarAnunciosView(Lider lider, DatosAplicacion datos) {
+    public EditarAnunciosView(Lider lider, DatosAplicacion datos, Runnable volver) {
         this.lider = lider;
         this.club = lider.getClubAdministrado();
         this.datos = datos;
         this.controlador = new AnunciosController(datos);
 
-        setTitle("Anuncios de " + club.getNombre());
-        setSize(800, 450);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
-        getRootPane().setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 24, 24, 24));
+        JPanel cabecera = new JPanel(new BorderLayout());
+        JLabel titulo = new JLabel("Anuncios de " + club.getNombre());
+        titulo.setFont(Estilos.SUBTITULO);
+        cabecera.add(titulo, BorderLayout.CENTER);
+        JButton regresar = new JButton("Volver al club");
+        regresar.addActionListener(e -> volver.run());
+        cabecera.add(regresar, BorderLayout.EAST);
+        add(cabecera, BorderLayout.NORTH);
 
         lista.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollLista = new JScrollPane(lista);
@@ -97,11 +100,10 @@ public class EditarAnunciosView extends JFrame {
         Anuncio a = club.getAnuncios().get(i);
         try {
             controlador.editarAnuncio(lider, a, campoTitulo.getText(), campoMensaje.getText());
-            datos.guardar();
             cargarLista();
             lista.setSelectedIndex(i);
             JOptionPane.showMessageDialog(this, "Anuncio actualizado.");
-        } catch (IllegalArgumentException ex) {
+        } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -121,9 +123,8 @@ public class EditarAnunciosView extends JFrame {
         }
         try {
             controlador.eliminarAnuncio(lider, a);
-            datos.guardar();
             cargarLista();
-        } catch (IllegalArgumentException ex) {
+        } catch (RuntimeException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

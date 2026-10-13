@@ -11,8 +11,15 @@ public class UsuarioController {
         return null;
     }
 
-    
+
     public void actualizarPerfil(Estudiante estudiante, String nombre, String carrera, String actual, String nueva, String confirmar) {
+
+    if (estudiante == null || !datos.getUsuarios().contains(estudiante)) {
+        throw new IllegalArgumentException("Estudiante no registrado.");
+    }
+    if (actual == null || nueva == null || confirmar == null) {
+        throw new IllegalArgumentException("Revisa los campos de contraseña.");
+    }
 
     if (nombre == null || nombre.trim().isEmpty()
             || carrera == null || carrera.trim().isEmpty()) {
@@ -47,8 +54,9 @@ public class UsuarioController {
 
         estudiante.setNombre(nombre.trim());
         estudiante.setCarrera(carrera.trim());
+        datos.guardar();
     }
- 
+
     /** Crea una cuenta de estudiante nueva. Lanza una excepción si algún dato no es válido. */
     public Estudiante registrarEstudiante(String nombre, String correo, String carrera, String contrasena) {
         // 1. Ningún campo vacío
@@ -58,31 +66,32 @@ public class UsuarioController {
                 || contrasena == null || contrasena.isEmpty()) {
             throw new IllegalArgumentException("Completa todos los campos.");
         }
- 
+
         nombre = nombre.trim();
         correo = correo.trim();
         carrera = carrera.trim();
- 
+
         // 2. Correo institucional
-        if (!correo.toLowerCase().endsWith("@universidad.edu")) {
-            throw new IllegalArgumentException("Usa tu correo institucional (@universidad.edu).");
+        if (!correo.toLowerCase().endsWith("@uvg.edu.gt")) {
+            throw new IllegalArgumentException("Usa tu correo institucional (@uvg.edu.gt).");
         }
- 
+
         // 3. Correo no repetido
         for (Usuario usuario : datos.getUsuarios()) {
             if (usuario.getCorreo().equalsIgnoreCase(correo)) {
                 throw new IllegalArgumentException("Ya existe una cuenta con ese correo.");
             }
         }
- 
+
         // 4. Contraseña de al menos 8 caracteres
         if (contrasena.length() < 8) {
             throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres.");
         }
- 
+
         // 5. Crear y guardar el estudiante
         Estudiante nuevo = new Estudiante(nombre, correo, carrera, contrasena);
         datos.getUsuarios().add(nuevo);
+        datos.guardar();
         return nuevo;
     }
 }
