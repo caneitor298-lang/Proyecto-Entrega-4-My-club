@@ -47,6 +47,21 @@ public class ClubController {
         validarTexto(horario, "El horario", 150);
         ((Lider) usuario).cambiarhorario(horario.trim());
     }
+
+    /** Devuelve los estudiantes inscritos en el club (membresía se guarda en cada Estudiante). */
+    public ArrayList<Estudiante> obtenerMiembros(Club club) {
+        if (club == null || !datos.getClubes().contains(club))
+            throw new IllegalArgumentException("Club no registrado.");
+        ArrayList<Estudiante> miembros = new ArrayList<>();
+        for (Usuario usuario : datos.getUsuarios()) {
+            if (usuario instanceof Estudiante) {
+                Estudiante estudiante = (Estudiante) usuario;
+                if (estudiante.getClubes().contains(club)) miembros.add(estudiante);
+            }
+        }
+        return miembros;
+    }
+
     private void validarLider(Usuario usuario, Club club) {
         validarUsuarioYClub(usuario, club);
         if (!(usuario instanceof Lider) || ((Lider) usuario).getClubAdministrado() != club)

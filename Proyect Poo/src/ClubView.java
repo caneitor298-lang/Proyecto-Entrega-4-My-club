@@ -1,5 +1,7 @@
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class ClubView extends JPanel {
     public ClubView(Usuario usuario, Club club, ClubController controlador, Runnable volver, Runnable refrescar) {
@@ -52,9 +54,44 @@ public class ClubView extends JPanel {
             JButton horario = new JButton("Cambiar horario");
             horario.addActionListener(e -> cambiarHorario(usuario, club, controlador, refrescar));
             acciones.add(horario);
+            JButton miembros = new JButton("Ver miembros");
+            miembros.addActionListener(e -> mostrarMiembros(club, controlador));
+            acciones.add(miembros);
         } else acciones.add(new JLabel("Solo el líder de este club puede administrarlo."));
         add(acciones, BorderLayout.SOUTH);
     }
+
+    private void mostrarMiembros(Club club, ClubController controlador) {
+        ArrayList<Estudiante> lista;
+        try {
+            lista = controlador.obtenerMiembros(club);
+        } catch (Exception ex) {
+            VentanaPrincipal.mostrarError(this, ex);
+            return;
+        }
+        DefaultTableModel modelo = new DefaultTableModel(new String[] {"Nombre", "Correo", "Carrera"}, 0) {
+            public boolean isCellEditable(int fila, int columna) { return false; }
+        };
+        for (Estudiante e : lista) {
+            modelo.addRow(new Object[] {e.getNombre(), e.getCorreo(), e.getCarrera()});
+        }
+        JTable tabla = new JTable(modelo);
+        tabla.setRowHeight(30);
+        tabla.setFillsViewportHeight(true);
+        tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scroll = new JScrollPane(tabla);
+        scroll.setPreferredSize(new Dimension(520, 260));
+        JPanel panel = new JPanel(new BorderLayout(8, 8));
+        JLabel total = new JLabel("Total de miembros: " + lista.size());
+        total.setFont(Estilos.SUBTITULO);
+        panel.add(total, BorderLayout.NORTH);
+        panel.add(scroll, BorderLayout.CENTER);
+        if (lista.isEmpty()) {
+            panel.add(new JLabel("Todavía no hay estudiantes inscritos en este club."), BorderLayout.SOUTH);
+        }
+        JOptionPane.showMessageDialog(this, panel, "Miembros de " + club.getNombre(), JOptionPane.PLAIN_MESSAGE);
+    }
+
     private void publicarAnuncio(Usuario usuario, Club club, ClubController controlador, Runnable refrescar) {
         JTextField titulo = new JTextField();
         JTextArea mensaje = new JTextArea(7, 34);
