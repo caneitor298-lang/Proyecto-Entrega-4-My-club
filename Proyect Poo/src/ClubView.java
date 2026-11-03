@@ -31,7 +31,7 @@ public class ClubView extends JPanel {
         }
         informacion.setCaretPosition(0);
         add(new JScrollPane(informacion), BorderLayout.CENTER);
-        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel acciones = new JPanel(new BorderLayout(12, 0));
         if (usuario instanceof Estudiante) {
             Estudiante estudiante = (Estudiante) usuario;
             boolean pertenece = estudiante.getClubes().contains(club);
@@ -46,8 +46,10 @@ public class ClubView extends JPanel {
                     refrescar.run();
                 } catch (Exception ex) { VentanaPrincipal.mostrarError(this, ex); }
             });
-            acciones.add(membresia);
-            acciones.add(new JLabel(pertenece ? "Ya eres miembro de este club." : "Puedes unirte cuando quieras."));
+            JLabel estadoMembresia = new JLabel(pertenece ? "Ya eres miembro de este club." : "Puedes unirte cuando quieras.");
+            estadoMembresia.setFont(Estilos.TEXTO);
+            acciones.add(estadoMembresia, BorderLayout.WEST);
+            acciones.add(membresia, BorderLayout.EAST);
         } else if (usuario instanceof Lider && ((Lider) usuario).getClubAdministrado() == club) {
             JButton publicar = new JButton("Publicar anuncio");
             publicar.addActionListener(e -> publicarAnuncio(usuario, club, controlador, refrescar));
@@ -64,7 +66,7 @@ public class ClubView extends JPanel {
             JButton informacionClub = new JButton("Editar información");
             informacionClub.addActionListener(e -> editarInformacion.run());
             acciones.add(informacionClub);
-            // Dos filas para que todos los botones quepan al reducir la ventana.
+        
             acciones.setLayout(new GridLayout(0, 3, 8, 8));
         } else acciones.add(new JLabel("Solo el líder de este club puede administrarlo."));
         add(acciones, BorderLayout.SOUTH);
