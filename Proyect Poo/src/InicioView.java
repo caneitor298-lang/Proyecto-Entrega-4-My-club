@@ -22,9 +22,11 @@ public class InicioView extends JPanel {
     public InicioView(ClubController controlador, Consumer<Club> abrirClub) {
         this.controlador = controlador;
         setLayout(new BorderLayout(12, 12));
-        setBorder(BorderFactory.createEmptyBorder(20, 24, 24, 24));
+        setBackground(Estilos.FONDO);
+        setBorder(BorderFactory.createEmptyBorder(24, 28, 24, 28));
         JLabel titulo = new JLabel("Explorar clubes");
         titulo.setFont(Estilos.TITULO);
+        titulo.setForeground(Estilos.AZUL_OSCURO);
         JPanel cabecera = new JPanel(new BorderLayout(10, 14));
         cabecera.add(titulo, BorderLayout.NORTH);
         JPanel filtros = new JPanel(new BorderLayout(10, 5));
@@ -41,16 +43,27 @@ public class InicioView extends JPanel {
         cabecera.add(filtros, BorderLayout.CENTER);
         add(cabecera, BorderLayout.NORTH);
         tabla.setName("clubes");
-        tabla.setRowHeight(34);
+        tabla.setRowHeight(40);
+        tabla.setFont(Estilos.TEXTO);
+        tabla.setShowGrid(false);
+        tabla.setIntercellSpacing(new Dimension(0, 0));
+        tabla.setSelectionBackground(Estilos.AZUL_CLARO);
+        tabla.setSelectionForeground(Estilos.AZUL_OSCURO);
+        tabla.getTableHeader().setFont(Estilos.BOTON);
+        tabla.getTableHeader().setBackground(Estilos.AZUL_OSCURO);
+        tabla.getTableHeader().setForeground(Estilos.BLANCO);
+        tabla.getTableHeader().setReorderingAllowed(false);
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabla.getColumnModel().getColumn(2).setPreferredWidth(250);
         tabla.setFillsViewportHeight(true);
         JScrollPane desplazamiento = new JScrollPane(tabla);
-        desplazamiento.setColumnHeaderView(tabla.getTableHeader());
+        desplazamiento.setBorder(BorderFactory.createLineBorder(Estilos.BORDE, 1));
+        desplazamiento.getViewport().setBackground(Estilos.BLANCO);
         add(desplazamiento, BorderLayout.CENTER);
         JPanel pie = new JPanel(new BorderLayout());
         pie.add(estado, BorderLayout.CENTER);
         Estilos.estilizarBoton(ver);
+        ver.setPreferredSize(new Dimension(190, 38));
         pie.add(ver, BorderLayout.EAST);
         add(pie, BorderLayout.SOUTH);
         buscar.getDocument().addDocumentListener(new DocumentListener() {

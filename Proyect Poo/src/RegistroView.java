@@ -8,8 +8,12 @@ public class RegistroView extends JPanel {
         setLayout(new GridBagLayout());
         setBackground(Estilos.FONDO);
         JPanel formulario = new JPanel(new GridLayout(0, 1, 6, 6));
-        formulario.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        formulario.setPreferredSize(new Dimension(430, 560));
+        formulario.setBackground(Estilos.BLANCO);
+        formulario.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Estilos.BORDE, 1),
+                BorderFactory.createEmptyBorder(24, 32, 24, 32)
+        ));
+        formulario.setPreferredSize(new Dimension(440, 580));
 
         JLabel titulo = new JLabel("Crear cuenta", SwingConstants.CENTER);
         titulo.setFont(Estilos.TITULO);
@@ -41,6 +45,7 @@ public class RegistroView extends JPanel {
         formulario.add(crear);
 
         JButton regresar = new JButton("Volver al inicio de sesión");
+        Estilos.estilizarBotonSecundario(regresar);
         formulario.add(regresar);
 
         JLabel estado = new JLabel(" ");

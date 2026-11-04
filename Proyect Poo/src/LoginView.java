@@ -8,8 +8,12 @@ public class LoginView extends JPanel {
         setLayout(new GridBagLayout());
         setBackground(Estilos.FONDO);
         JPanel formulario = new JPanel(new GridLayout(0, 1, 8, 10));
-        formulario.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 30));
-        formulario.setPreferredSize(new Dimension(430, 440));
+        formulario.setBackground(Estilos.BLANCO);
+        formulario.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Estilos.BORDE, 1),
+                BorderFactory.createEmptyBorder(28, 32, 28, 32)
+        ));
+        formulario.setPreferredSize(new Dimension(430, 460));
         JLabel titulo = new JLabel("MY CLUB", SwingConstants.CENTER);
         titulo.setFont(Estilos.TITULO);
         titulo.setForeground(Estilos.AZUL_OSCURO);
@@ -27,6 +31,7 @@ public class LoginView extends JPanel {
         Estilos.estilizarBoton(ingresar);
         formulario.add(ingresar);
         JButton registrar = new JButton("Crear cuenta");
+        Estilos.estilizarBotonSecundario(registrar);
         formulario.add(registrar);
         JLabel estado = new JLabel(" ");
         formulario.add(estado);

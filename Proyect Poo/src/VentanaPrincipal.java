@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 
-/** Una sola ventana; CardLayout cambia el contenido sin abrir ventanas nuevas. */
 public class VentanaPrincipal extends JFrame {
     private final UsuarioController usuarios;
     private final ClubController clubes;
@@ -24,6 +23,8 @@ public class VentanaPrincipal extends JFrame {
         setSize(940, 680);
         setMinimumSize(new Dimension(740, 560));
         setLocationRelativeTo(null);
+        contenido.setBackground(Estilos.FONDO);
+        getContentPane().setBackground(Estilos.FONDO);
         add(menu, BorderLayout.NORTH);
         add(contenido, BorderLayout.CENTER);
         mostrarLogin();
@@ -52,36 +53,55 @@ public class VentanaPrincipal extends JFrame {
         this.usuario = usuario;
         contenido.removeAll();
         menu.removeAll();
-        JLabel marca = new JLabel("MY CLUB  |  " + usuario.getNombre() + "  ·  "
+        menu.setBackground(Estilos.VERDE_MUY_CLARO);
+        menu.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 2, 0, Estilos.VERDE_OSCURO),
+                BorderFactory.createEmptyBorder(8, 16, 10, 16)
+        ));
+
+        JLabel marca = new JLabel("MY CLUB  ·  " + usuario.getNombre() + "  ·  "
                 + (usuario instanceof Lider ? "Líder" : "Estudiante"));
-        marca.setBorder(BorderFactory.createEmptyBorder(10, 14, 0, 14));
+        marca.setFont(Estilos.SUBTITULO);
+        marca.setForeground(Estilos.VERDE_OSCURO);
         menu.add(marca, BorderLayout.NORTH);
-        JPanel navegacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+
+        JPanel navegacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
+        navegacion.setOpaque(false);
         menu.add(navegacion, BorderLayout.CENTER);
+
         JButton explorar = new JButton("Explorar clubes");
+        Estilos.estilizarBoton(explorar);
         explorar.addActionListener(e -> mostrarInicio());
         navegacion.add(explorar);
 
         if (usuario instanceof Estudiante) {
             JButton mis = new JButton("Mis clubes");
+            Estilos.estilizarBoton(mis);
             mis.addActionListener(e -> mostrarMisClubes());
             navegacion.add(mis);
+
             JButton perfil = new JButton("Mi perfil");
+            Estilos.estilizarBoton(perfil);
             perfil.addActionListener(e -> mostrarPerfil());
             navegacion.add(perfil);
         } else {
             JButton administrar = new JButton("Administrar mi club");
+            Estilos.estilizarBoton(administrar);
             administrar.addActionListener(e -> mostrarClub(((Lider) usuario).getClubAdministrado(), this::mostrarInicio));
             navegacion.add(administrar);
         }
+
         JButton salir = new JButton("Cerrar sesión");
+        Estilos.estilizarBotonPeligro(salir);
         salir.addActionListener(e -> mostrarLogin());
         navegacion.add(salir);
+
         menu.setVisible(true);
         inicio = new InicioView(clubes, club -> mostrarClub(club, this::mostrarInicio));
         contenido.add(inicio, "inicio");
         mostrarInicio();
     }
+
     public void mostrarInicio() {
         inicio.refrescar();
         tarjetas.show(contenido, "inicio");

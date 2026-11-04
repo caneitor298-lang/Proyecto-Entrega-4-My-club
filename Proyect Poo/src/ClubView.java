@@ -7,12 +7,15 @@ public class ClubView extends JPanel {
     public ClubView(Usuario usuario, Club club, ClubController controlador, Runnable volver, Runnable refrescar,
                     Runnable editarAnuncios, Runnable editarInformacion) {
         setLayout(new BorderLayout(12, 12));
+        setBackground(Estilos.FONDO);
         setBorder(BorderFactory.createEmptyBorder(20, 24, 24, 24));
         JPanel cabecera = new JPanel(new BorderLayout());
         JLabel titulo = new JLabel(club.getNombre());
         titulo.setFont(Estilos.TITULO);
+        titulo.setForeground(Estilos.VERDE_OSCURO);
         cabecera.add(titulo, BorderLayout.CENTER);
         JButton regresar = new JButton("Volver");
+        Estilos.estilizarBotonSecundario(regresar);
         regresar.addActionListener(e -> volver.run());
         cabecera.add(regresar, BorderLayout.EAST);
         add(cabecera, BorderLayout.NORTH);
@@ -46,6 +49,7 @@ public class ClubView extends JPanel {
                     refrescar.run();
                 } catch (Exception ex) { VentanaPrincipal.mostrarError(this, ex); }
             });
+            
             JLabel estadoMembresia = new JLabel(pertenece ? "Ya eres miembro de este club." : "Puedes unirte cuando quieras.");
             estadoMembresia.setFont(Estilos.TEXTO);
             acciones.add(estadoMembresia, BorderLayout.WEST);
@@ -66,7 +70,7 @@ public class ClubView extends JPanel {
             JButton informacionClub = new JButton("Editar información");
             informacionClub.addActionListener(e -> editarInformacion.run());
             acciones.add(informacionClub);
-        
+            
             acciones.setLayout(new GridLayout(0, 3, 8, 8));
         } else acciones.add(new JLabel("Solo el líder de este club puede administrarlo."));
         add(acciones, BorderLayout.SOUTH);

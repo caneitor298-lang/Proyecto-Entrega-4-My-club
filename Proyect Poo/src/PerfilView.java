@@ -9,13 +9,12 @@ public class PerfilView extends JPanel {
                       Runnable volver) {
 
         setLayout(new BorderLayout());
-        setBackground(new Color(245, 247, 250));
+        setBackground(Estilos.FONDO);
 
-       
         JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
+        form.setBackground(Estilos.BLANCO);
         form.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 218, 230), 1),
+                BorderFactory.createLineBorder(Estilos.BORDE, 1),
                 BorderFactory.createEmptyBorder(24, 28, 24, 28)
         ));
 
@@ -27,16 +26,13 @@ public class PerfilView extends JPanel {
 
         int fila = 0;
 
-        // Título
         JLabel titulo = new JLabel("Mi perfil");
-        titulo.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        titulo.setForeground(new Color(20, 35, 70));
+        titulo.setFont(Estilos.TITULO);
+        titulo.setForeground(Estilos.VERDE_OSCURO);
         c.gridy = fila++;
         c.insets = new Insets(0, 0, 18, 0);
         form.add(titulo, c);
 
-
-        // Campos
         JTextField nombre = crearCampoTexto(estudiante.getNombre());
         JTextField carrera = crearCampoTexto(estudiante.getCarrera());
         JPasswordField actual = crearCampoPassword();
@@ -46,50 +42,33 @@ public class PerfilView extends JPanel {
         fila = agregarCampo(form, c, fila, "Nombre completo", nombre);
         fila = agregarCampo(form, c, fila, "Carrera", carrera);
 
-        // Separador
         JSeparator sep = new JSeparator();
+        sep.setForeground(Estilos.BORDE);
         c.gridy = fila++;
         c.insets = new Insets(6, 0, 12, 0);
         form.add(sep, c);
 
         JLabel secPass = new JLabel("Cambiar contraseña");
-        secPass.setFont(new Font("Segoe UI", Font.BOLD, 15));
-        secPass.setForeground(new Color(20, 35, 70));
+        secPass.setFont(Estilos.SUBTITULO);
+        secPass.setForeground(Estilos.VERDE_OSCURO);
         c.gridy = fila++;
         c.insets = new Insets(0, 0, 12, 0);
         form.add(secPass, c);
-
 
         fila = agregarCampo(form, c, fila, "Contraseña actual", actual);
         fila = agregarCampo(form, c, fila, "Nueva contraseña", nueva);
         fila = agregarCampo(form, c, fila, "Confirmar nueva contraseña", confirmar);
 
-        
         JPanel botones = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         botones.setOpaque(false);
 
         JButton guardar = new JButton("Guardar cambios");
-        guardar.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        guardar.setBackground(new Color(52, 105, 200));
-        guardar.setForeground(Color.WHITE);
-        guardar.setFocusPainted(false);
-        guardar.setBorder(BorderFactory.createEmptyBorder(9, 16, 9, 16));
+        Estilos.estilizarBoton(guardar);
         guardar.setPreferredSize(new Dimension(150, 36));
-        guardar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        guardar.setOpaque(true);
 
         JButton cancelar = new JButton("Volver");
-        cancelar.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        cancelar.setBackground(Color.WHITE);
-        cancelar.setForeground(new Color(52, 105, 200));
-        cancelar.setFocusPainted(false);
-        cancelar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(52, 105, 200), 1),
-                BorderFactory.createEmptyBorder(8, 14, 8, 14)
-        ));
+        Estilos.estilizarBotonSecundario(cancelar);
         cancelar.setPreferredSize(new Dimension(100, 36));
-        cancelar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        cancelar.setOpaque(true);
 
         botones.add(guardar);
         botones.add(cancelar);
@@ -125,7 +104,7 @@ public class PerfilView extends JPanel {
 
         JScrollPane scroll = new JScrollPane(wrapper);
         scroll.setBorder(null);
-        scroll.getViewport().setBackground(new Color(245, 247, 250));
+        scroll.getViewport().setBackground(Estilos.FONDO);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -134,8 +113,8 @@ public class PerfilView extends JPanel {
 
     private int agregarCampo(JPanel form, GridBagConstraints c, int fila, String etiqueta, JComponent campo) {
         JLabel lbl = new JLabel(etiqueta);
-        lbl.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        lbl.setForeground(new Color(90, 100, 120));
+        lbl.setFont(Estilos.TEXTO_PEQUENO);
+        lbl.setForeground(Estilos.GRIS_TEXTO);
         c.gridy = fila++;
         c.insets = new Insets(0, 0, 3, 0);
         form.add(lbl, c);
@@ -148,26 +127,17 @@ public class PerfilView extends JPanel {
 
     private JTextField crearCampoTexto(String valor) {
         JTextField tf = new JTextField(valor);
-        tf.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        // Altura fija, ancho flexible (se ajusta a la ventana)
+        Estilos.estilizarCampo(tf);
         tf.setPreferredSize(new Dimension(100, 34));
         tf.setMinimumSize(new Dimension(80, 34));
-        tf.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 218, 230), 1),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
         return tf;
     }
 
     private JPasswordField crearCampoPassword() {
         JPasswordField pf = new JPasswordField();
-        pf.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        Estilos.estilizarCampo(pf);
         pf.setPreferredSize(new Dimension(100, 34));
         pf.setMinimumSize(new Dimension(80, 34));
-        pf.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 218, 230), 1),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)
-        ));
         return pf;
     }
 }
