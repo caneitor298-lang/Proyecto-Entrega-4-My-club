@@ -8,12 +8,15 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 public class VistaRegistro extends FondoDeportesArte {
+    private static final long serialVersionUID = 1L;
     public VistaRegistro(UsuarioController controlador, Consumer<Usuario> alRegistrar, Runnable volver) {
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout());
 
         JPanel tarjeta = new JPanel(null);
         tarjeta.setPreferredSize(new Dimension(448, 520));
@@ -31,6 +34,7 @@ public class VistaRegistro extends FondoDeportesArte {
         tarjeta.add(textoNombre);
 
         JTextField nombre = new JTextField();
+        nombre.setName("nombreRegistro");
         EstilosAcceso.estilizarCampo(nombre);
         nombre.setBounds(64, 98, 320, 18);
         tarjeta.add(nombre);
@@ -41,6 +45,7 @@ public class VistaRegistro extends FondoDeportesArte {
         tarjeta.add(textoCorreo);
 
         JTextField correo = new JTextField();
+        correo.setName("correoRegistro");
         EstilosAcceso.estilizarCampo(correo);
         correo.setBounds(64, 160, 320, 18);
         tarjeta.add(correo);
@@ -51,6 +56,7 @@ public class VistaRegistro extends FondoDeportesArte {
         tarjeta.add(textoCarrera);
 
         JTextField carrera = new JTextField();
+        carrera.setName("carreraRegistro");
         EstilosAcceso.estilizarCampo(carrera);
         carrera.setBounds(64, 222, 320, 18);
         tarjeta.add(carrera);
@@ -61,6 +67,7 @@ public class VistaRegistro extends FondoDeportesArte {
         tarjeta.add(textoContrasena);
 
         JPasswordField contrasena = new JPasswordField();
+        contrasena.setName("contrasenaRegistro");
         EstilosAcceso.estilizarCampo(contrasena);
         contrasena.setBounds(64, 284, 320, 18);
         tarjeta.add(contrasena);
@@ -71,21 +78,25 @@ public class VistaRegistro extends FondoDeportesArte {
         tarjeta.add(textoConfirmar);
 
         JPasswordField confirmar = new JPasswordField();
+        confirmar.setName("confirmarRegistro");
         EstilosAcceso.estilizarCampo(confirmar);
         confirmar.setBounds(64, 346, 320, 18);
         tarjeta.add(confirmar);
 
         JButton crear = new JButton("Crear cuenta");
+        crear.setName("crearEstudiante");
         EstilosAcceso.estilizarBotonVerde(crear);
         crear.setBounds(64, 388, 320, 32);
         tarjeta.add(crear);
 
         JButton regresar = new JButton("Volver al inicio de sesión");
+        regresar.setName("volverRegistro");
         EstilosAcceso.estilizarBotonClaro(regresar);
         regresar.setBounds(64, 434, 320, 33);
         tarjeta.add(regresar);
 
         JLabel estado = new JLabel(" ");
+        estado.setName("estadoRegistro");
         estado.setFont(EstilosAcceso.ETIQUETA);
         estado.setForeground(Color.RED);
         estado.setBounds(64, 478, 320, 20);
@@ -118,6 +129,15 @@ public class VistaRegistro extends FondoDeportesArte {
         JPanel marco = new JPanel(new BorderLayout());
         marco.setBorder(EstilosAcceso.crearMarco());
         marco.add(tarjeta);
-        add(marco);
+        JPanel centrado = new JPanel(new GridBagLayout());
+        centrado.setOpaque(false);
+        centrado.add(marco);
+        JScrollPane desplazamiento = new JScrollPane(centrado);
+        desplazamiento.setBorder(null);
+        desplazamiento.setOpaque(false);
+        desplazamiento.getViewport().setOpaque(false);
+        desplazamiento.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        desplazamiento.getVerticalScrollBar().setUnitIncrement(16);
+        add(desplazamiento, BorderLayout.CENTER);
     }
 }

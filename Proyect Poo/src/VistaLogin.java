@@ -12,11 +12,18 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class VistaLogin extends FondoDeportesArte {
+    private static final long serialVersionUID = 1L;
+
     public VistaLogin(UsuarioController controlador, Consumer<Usuario> alIngresar, Runnable irARegistro) {
+        this(controlador, alIngresar, irARegistro, null);
+    }
+
+    public VistaLogin(UsuarioController controlador, Consumer<Usuario> alIngresar,
+                      Runnable irARegistro, Runnable irARegistroLider) {
         setLayout(new GridBagLayout());
 
         JPanel tarjeta = new JPanel(null);
-        tarjeta.setPreferredSize(new Dimension(448, 372));
+        tarjeta.setPreferredSize(new Dimension(448, irARegistroLider == null ? 372 : 422));
         tarjeta.setBackground(EstilosAcceso.TARJETA);
 
         JLabel titulo = new JLabel("MY CLUB", SwingConstants.CENTER);
@@ -53,19 +60,31 @@ public class VistaLogin extends FondoDeportesArte {
         tarjeta.add(contrasena);
 
         JButton ingresar = new JButton("Iniciar sesión");
+        ingresar.setName("ingresar");
         EstilosAcceso.estilizarBotonVerde(ingresar);
         ingresar.setBounds(64, 240, 320, 32);
         tarjeta.add(ingresar);
 
-        JButton registrar = new JButton("Crear cuenta");
+        JButton registrar = new JButton("Crear cuenta de estudiante");
+        registrar.setName("registrarEstudiante");
         EstilosAcceso.estilizarBotonClaro(registrar);
         registrar.setBounds(64, 290, 320, 33);
         tarjeta.add(registrar);
 
+        if (irARegistroLider != null) {
+            JButton lider = new JButton("Solicitar registro de líder");
+            lider.setName("registrarLider");
+            EstilosAcceso.estilizarBotonClaro(lider);
+            lider.setBounds(64, 335, 320, 33);
+            lider.addActionListener(e -> irARegistroLider.run());
+            tarjeta.add(lider);
+        }
+
         JLabel estado = new JLabel(" ");
+        estado.setName("estadoLogin");
         estado.setFont(EstilosAcceso.ETIQUETA);
         estado.setForeground(Color.RED);
-        estado.setBounds(64, 335, 320, 20);
+        estado.setBounds(64, irARegistroLider == null ? 335 : 385, 320, 20);
         tarjeta.add(estado);
 
         ingresar.addActionListener(e -> {

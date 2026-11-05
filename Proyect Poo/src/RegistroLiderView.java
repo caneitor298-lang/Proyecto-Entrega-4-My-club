@@ -1,118 +1,139 @@
-
 import java.awt.*;
 import java.util.Arrays;
-import java.util.function.Consumer;
 import javax.swing.*;
 
+/** El formulario guarda una solicitud; la cuenta se crea cuando el administrador la acepta. */
 public class RegistroLiderView extends JPanel {
-    public RegistroLiderView(UsuarioController controlador, Consumer<Usuario> alRegistrar, Runnable volver) {
-        setLayout(new GridBagLayout());
-        setBackground(Estilos.FONDO);
-        JPanel formulario = new JPanel(new GridLayout(0, 1, 6, 5));
-        formulario.setBorder(
-            BorderFactory.createEmptyBorder(18, 28, 18, 28)
-        );
+    private static final long serialVersionUID = 1L;
 
-        JLabel titulo = new JLabel(
-            "Registro de líder de club",
-            SwingConstants.CENTER
-        );
+    public RegistroLiderView(SolicitudesController controlador, Runnable volver) {
+        setLayout(new BorderLayout());
+        setBackground(Estilos.FONDO_VERDE);
+        setBorder(BorderFactory.createEmptyBorder(16, 20, 16, 20));
+        JPanel formulario = new JPanel(new GridBagLayout());
+        formulario.setBackground(Color.WHITE);
+        formulario.setBorder(BorderFactory.createEmptyBorder(18, 28, 18, 28));
 
+        JLabel titulo = new JLabel("Solicitud de registro de líder", SwingConstants.CENTER);
         titulo.setFont(Estilos.TITULO);
-        titulo.setForeground(Estilos.AZUL_OSCURO);
-        formulario.add(titulo);
+        titulo.setForeground(Estilos.VERDE);
+        int fila = 0;
+        agregar(formulario, titulo, fila++);
+        agregar(formulario, new JLabel("El administrador debe aprobar la cuenta y el club."), fila++);
 
-        formulario.add(new JLabel("Nombre completo"));
-        JTextField nombre = new JTextField();
-        formulario.add(nombre);
-
-        formulario.add(new JLabel("Carnet"));
-        JTextField carnet = new JTextField();
-        formulario.add(carnet);
-
-        formulario.add(new JLabel("Edad"));
-        JTextField edad = new JTextField();
-        formulario.add(edad);
-
-        formulario.add(new JLabel("Nombre del club que administrará"));
-        JTextField nombreClub = new JTextField();
-        formulario.add(nombreClub);
-
-        formulario.add(new JLabel("Correo institucional"));
-        JTextField correo = new JTextField();
-        formulario.add(correo);
-
-        formulario.add(new JLabel("Contraseña (mínimo 8 caracteres)"));
+        JTextField nombre = campo("nombreLider");
+        JTextField carnet = campo("carnetLider");
+        JTextField edad = campo("edadLider");
+        JTextField carrera = campo("carreraLider");
+        JTextField nombreClub = campo("nombreClubLider");
+        JTextField correo = campo("correoLider");
+        JTextField ubicacion = campo("ubicacionClubLider");
+        JTextField horario = campo("horarioClubLider");
+        JTextArea descripcion = new JTextArea(4, 30);
+        descripcion.setName("descripcionClubLider");
+        descripcion.setLineWrap(true);
+        descripcion.setWrapStyleWord(true);
+        JComboBox<String> categoria = new JComboBox<>(new String[] {
+            "Deportes", "Tecnología", "Arte", "Académicos", "Entretenimiento"
+        });
+        categoria.setName("categoriaClubLider");
         JPasswordField contrasena = new JPasswordField();
-        formulario.add(contrasena);
-
-        formulario.add(new JLabel("Confirmar contraseña"));
+        contrasena.setName("contrasenaLider");
         JPasswordField confirmar = new JPasswordField();
-        formulario.add(confirmar);
+        confirmar.setName("confirmarLider");
 
-        JButton crear = new JButton("Crear cuenta de líder");
-        Estilos.estilizarBoton(crear);
-        formulario.add(crear);
+        fila = agregarCampo(formulario, "Nombre completo", nombre, fila);
+        fila = agregarCampo(formulario, "Carné", carnet, fila);
+        fila = agregarCampo(formulario, "Edad", edad, fila);
+        fila = agregarCampo(formulario, "Carrera", carrera, fila);
+        fila = agregarCampo(formulario, "Correo institucional", correo, fila);
+        fila = agregarCampo(formulario, "Nombre del club que administrará", nombreClub, fila);
+        fila = agregarCampo(formulario, "Categoría del club", categoria, fila);
+        fila = agregarCampo(formulario, "Descripción del club", new JScrollPane(descripcion), fila);
+        fila = agregarCampo(formulario, "Ubicación", ubicacion, fila);
+        fila = agregarCampo(formulario, "Horario", horario, fila);
+        fila = agregarCampo(formulario, "Contraseña (mínimo 8 caracteres)", contrasena, fila);
+        fila = agregarCampo(formulario, "Confirmar contraseña", confirmar, fila);
 
+        JButton enviar = new JButton("Enviar solicitud de líder");
+        enviar.setName("enviarSolicitudLider");
+        Estilos.estilizarBoton(enviar);
+        agregar(formulario, enviar, fila++);
         JButton regresar = new JButton("Volver al inicio de sesión");
-        formulario.add(regresar);
+        agregar(formulario, regresar, fila++);
+        JTextArea estado = new JTextArea(2, 30);
+        estado.setName("estadoRegistroLider");
+        estado.setEditable(false);
+        estado.setLineWrap(true);
+        estado.setWrapStyleWord(true);
+        estado.setOpaque(false);
+        estado.setForeground(Estilos.ROJO);
+        agregar(formulario, estado, fila++);
 
-        JLabel estado = new JLabel(" ");
-        estado.setForeground(Color.RED);
-        formulario.add(estado);
-
-        crear.addActionListener(e -> {
+        enviar.addActionListener(e -> {
             char[] clave = contrasena.getPassword();
             char[] clave2 = confirmar.getPassword();
             try {
-
                 if (!Arrays.equals(clave, clave2)) {
-                    throw new IllegalArgumentException(
-                        "Las contraseñas no coinciden."
-                    );
+                    throw new IllegalArgumentException("Las contraseñas no coinciden.");
                 }
                 int edadIngresada;
-
                 try {
-                    edadIngresada = Integer.parseInt(
-                        edad.getText().trim()
-                    );
+                    edadIngresada = Integer.parseInt(edad.getText().trim());
                 } catch (NumberFormatException ex) {
-                    throw new IllegalArgumentException(
-                        "La edad debe ser un número entero."
-                    );
+                    throw new IllegalArgumentException("La edad debe ser un número entero.");
                 }
-
-                Lider nuevo = controlador.registrarLider(
-                    nombre.getText(),
-                    carnet.getText(),
-                    edadIngresada,
-                    nombreClub.getText(),
-                    correo.getText(),
-                    new String(clave)
+                SolicitudLider enviada = controlador.enviarSolicitud(
+                    carnet.getText(), nombre.getText(), edadIngresada,
+                    correo.getText(), carrera.getText(), new String(clave),
+                    nombreClub.getText(), descripcion.getText(),
+                    (String) categoria.getSelectedItem(), ubicacion.getText(), horario.getText()
                 );
-                alRegistrar.accept(nuevo);
-
+                JOptionPane.showMessageDialog(this,
+                    "Solicitud de " + enviada.getNombreClub() + " enviada y guardada. "
+                    + "Podrás iniciar sesión cuando el administrador la acepte.");
+                volver.run();
             } catch (RuntimeException ex) {
-
                 estado.setText(ex.getMessage());
-
             } finally {
-
                 Arrays.fill(clave, '\0');
                 Arrays.fill(clave2, '\0');
-
                 contrasena.setText("");
                 confirmar.setText("");
             }
         });
-
         regresar.addActionListener(e -> volver.run());
-        JScrollPane desplazamiento = new JScrollPane(formulario);
-        desplazamiento.setBorder(null);
-        desplazamiento.setPreferredSize(new Dimension(470, 620));
 
-        add(desplazamiento);
+        JPanel contenedor = new JPanel(new BorderLayout());
+        contenedor.setOpaque(false);
+        contenedor.add(formulario, BorderLayout.NORTH);
+        JScrollPane desplazamiento = new JScrollPane(contenedor);
+        desplazamiento.setBorder(null);
+        desplazamiento.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        desplazamiento.getVerticalScrollBar().setUnitIncrement(18);
+        add(desplazamiento, BorderLayout.CENTER);
     }
-    
+
+    private JTextField campo(String nombre) {
+        JTextField campo = new JTextField(30);
+        campo.setName(nombre);
+        return campo;
+    }
+
+    private int agregarCampo(JPanel panel, String etiqueta, JComponent campo, int fila) {
+        agregar(panel, new JLabel(etiqueta), fila++);
+        campo.setFont(Estilos.TEXTO);
+        agregar(panel, campo, fila++);
+        return fila;
+    }
+
+    private void agregar(JPanel panel, JComponent componente, int fila) {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = fila;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(3, 0, 5, 0);
+        panel.add(componente, c);
+    }
 }

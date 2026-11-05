@@ -26,7 +26,11 @@ public class MainAnuncios {
             System.exit(0);
         }
 
-        EditarAnunciosView ventana = new EditarAnunciosView((Lider) usuario, datos);
+        javax.swing.JFrame ventana = new javax.swing.JFrame("Anuncios de mi club");
+        ventana.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+        ventana.setContentPane(new EditarAnunciosView((Lider) usuario, datos, ventana::dispose));
+        ventana.setSize(900, 600);
+        ventana.setLocationRelativeTo(null);
         ventana.setVisible(true);
     }
 }

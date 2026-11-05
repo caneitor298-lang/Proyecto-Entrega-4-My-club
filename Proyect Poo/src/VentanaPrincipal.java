@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 
-/** Una sola ventana; CardLayout cambia el contenido sin abrir ventanas nuevas. */
 public class VentanaPrincipal extends JFrame {
     private final UsuarioController usuarios;
     private final ClubController clubes;
@@ -14,6 +13,7 @@ public class VentanaPrincipal extends JFrame {
     private JPanel detalle;
     private JPanel misClubes;
     private JPanel edicion;
+    private AdministradorView solicitudes;
 
     public VentanaPrincipal(UsuarioController usuarios, ClubController clubes, DatosAplicacion datos) {
         this.usuarios = usuarios;
@@ -24,6 +24,8 @@ public class VentanaPrincipal extends JFrame {
         setSize(940, 680);
         setMinimumSize(new Dimension(740, 560));
         setLocationRelativeTo(null);
+        contenido.setBackground(Estilos.FONDO);
+        getContentPane().setBackground(Estilos.FONDO);
         add(menu, BorderLayout.NORTH);
         add(contenido, BorderLayout.CENTER);
         mostrarLogin();
@@ -34,10 +36,12 @@ public class VentanaPrincipal extends JFrame {
         detalle = null;
         misClubes = null;
         edicion = null;
+        solicitudes = null;
         menu.removeAll();
         menu.setVisible(false);
         contenido.removeAll();
-        contenido.add(new LoginView(usuarios, this::abrirSesion, this::mostrarRegistro, this::mostrarRegistroLider), "login");
+        contenido.add(new LoginView(usuarios, this::abrirSesion, this::mostrarRegistro,
+                this::mostrarRegistroLider), "login");
         tarjetas.show(contenido, "login");
         contenido.revalidate();
         contenido.repaint();
@@ -48,12 +52,8 @@ public class VentanaPrincipal extends JFrame {
         contenido.revalidate();
         contenido.repaint();
     }
-
     public void mostrarRegistroLider() {
-    contenido.add(
-        new RegistroLiderView(usuarios, this::abrirSesion, this::mostrarLogin),
-        "registroLider"
-    );
+        contenido.add(new RegistroLiderView(new SolicitudesController(datos), this::mostrarLogin), "registroLider");
         tarjetas.show(contenido, "registroLider");
         contenido.revalidate();
         contenido.repaint();
@@ -63,39 +63,71 @@ public class VentanaPrincipal extends JFrame {
         this.usuario = usuario;
         contenido.removeAll();
         menu.removeAll();
+        menu.setBackground(Estilos.VERDE_MUY_CLARO);
+        menu.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 2, 0, Estilos.VERDE_OSCURO),
+                BorderFactory.createEmptyBorder(8, 16, 10, 16)
+        ));
+
         JLabel marca = new JLabel("MY CLUB  ·  " + usuario.getNombre() + "  ·  "
-                + (usuario instanceof Lider ? "Líder" : "Estudiante"));
-        marca.setBorder(BorderFactory.createEmptyBorder(10, 14, 0, 14));
+                + (usuario instanceof Administrador ? "Administrador"
+                        : usuario instanceof Lider ? "Líder" : "Estudiante"));
         marca.setFont(Estilos.SUBTITULO);
-        marca.setForeground(Estilos.VERDE);
+        marca.setForeground(Estilos.VERDE_OSCURO);
         menu.add(marca, BorderLayout.NORTH);
-        JPanel navegacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 6));
+
+        JPanel navegacion = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 4));
+        navegacion.setOpaque(false);
         menu.add(navegacion, BorderLayout.CENTER);
+
+        if (usuario instanceof Administrador) {
+            solicitudes = new AdministradorView(usuario, new SolicitudesController(datos));
+            contenido.add(solicitudes, "solicitudes");
+            JButton revisar = new JButton("Solicitudes de líderes");
+            Estilos.estilizarBoton(revisar);
+            revisar.addActionListener(e -> {
+                solicitudes.refrescar();
+                tarjetas.show(contenido, "solicitudes");
+            });
+            navegacion.add(revisar);
+            JButton cerrar = new JButton("Cerrar sesión");
+            Estilos.estilizarBotonPeligro(cerrar);
+            cerrar.addActionListener(e -> mostrarLogin());
+            navegacion.add(cerrar);
+            menu.setVisible(true);
+            tarjetas.show(contenido, "solicitudes");
+            contenido.revalidate();
+            contenido.repaint();
+            return;
+        }
+
         JButton explorar = new JButton("Explorar clubes");
+        Estilos.estilizarBoton(explorar);
         explorar.addActionListener(e -> mostrarInicio());
         navegacion.add(explorar);
 
         if (usuario instanceof Estudiante) {
             JButton mis = new JButton("Mis clubes");
+            Estilos.estilizarBoton(mis);
             mis.addActionListener(e -> mostrarMisClubes());
             navegacion.add(mis);
+
             JButton perfil = new JButton("Mi perfil");
+            Estilos.estilizarBoton(perfil);
             perfil.addActionListener(e -> mostrarPerfil());
             navegacion.add(perfil);
         } else {
             JButton administrar = new JButton("Administrar mi club");
+            Estilos.estilizarBoton(administrar);
             administrar.addActionListener(e -> mostrarClub(((Lider) usuario).getClubAdministrado(), this::mostrarInicio));
             navegacion.add(administrar);
         }
+
         JButton salir = new JButton("Cerrar sesión");
+        Estilos.estilizarBotonPeligro(salir);
         salir.addActionListener(e -> mostrarLogin());
         navegacion.add(salir);
-        for (Component c : navegacion.getComponents()) Estilos.estilizarBoton((JButton) c);
-        Estilos.estilizarBotonPeligro(salir);
-        navegacion.setBackground(Estilos.FONDO_VERDE);
-        menu.setBackground(Estilos.FONDO_VERDE);
-        marca.setOpaque(false);
-        menu.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Estilos.VERDE));
+
         menu.setVisible(true);
         inicio = new InicioView(clubes, club -> mostrarClub(club, this::mostrarInicio));
         contenido.add(inicio, "inicio");
@@ -108,7 +140,6 @@ public class VentanaPrincipal extends JFrame {
         contenido.revalidate();
         contenido.repaint();
     }
-
     public void mostrarMisClubes() {
         if (!(usuario instanceof Estudiante)) return;
         if (misClubes != null) contenido.remove(misClubes);
@@ -119,7 +150,6 @@ public class VentanaPrincipal extends JFrame {
         contenido.revalidate();
         contenido.repaint();
     }
-    
     public void mostrarClub(Club club, Runnable volver) {
         if (detalle != null) contenido.remove(detalle);
         detalle = new ClubView(usuario, club, clubes, volver, () -> mostrarClub(club, volver),
@@ -176,3 +206,4 @@ public class VentanaPrincipal extends JFrame {
         contenido.repaint();
     }
 }
+

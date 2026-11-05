@@ -23,6 +23,9 @@ public class Estilos {
     public static final Color BORDE = new Color(190, 215, 195);
     public static final Color EXITO = VERDE_OSCURO;
     public static final Color PELIGRO = new Color(190, 50, 50);
+    // Nombres utilizados por el registro de líder y la vista del administrador.
+    public static final Color FONDO_VERDE = FONDO;
+    public static final Color ROJO = PELIGRO;
 
     public static final Font TITULO = new Font("Segoe UI", Font.BOLD, 26);
     public static final Font SUBTITULO = new Font("Segoe UI", Font.BOLD, 17);
@@ -88,5 +91,17 @@ public class Estilos {
                 BorderFactory.createLineBorder(BORDE, 1),
                 BorderFactory.createEmptyBorder(24, 28, 24, 28)
         ));
+    }
+
+    public static void estilizarTabla(JTable tabla) {
+        tabla.setFont(TEXTO);
+        tabla.setForeground(GRIS_TEXTO);
+        tabla.setRowHeight(40);
+        tabla.setSelectionBackground(VERDE_CLARO);
+        tabla.setSelectionForeground(VERDE_OSCURO);
+        tabla.setGridColor(BORDE);
+        tabla.getTableHeader().setBackground(VERDE_OSCURO);
+        tabla.getTableHeader().setForeground(BLANCO);
+        tabla.getTableHeader().setFont(BOTON);
     }
 }
